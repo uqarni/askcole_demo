@@ -10,13 +10,14 @@ st.title("AskCole")
 if st.session_state.get("dbs") is None:
     if st.button("Initialize Vector Databases (takes a minute)"):
         st.session_state["dbs"] = initialize_all_vdbs()
+        st.rerun()
 
 else:
     if "openai_model" not in st.session_state:
         st.session_state["openai_model"] = "gpt-3.5-turbo"
 
     if "messages" not in st.session_state:
-        st.session_state.messages = []
+        st.session_state["messages"] = []
 
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
@@ -44,10 +45,11 @@ st.sidebar.subheader("Topic")
 st.sidebar.write(st.session_state.get("topic", ""))
 # st.sidebar.write("Answer Prompt")
 # st.sidebar.write(st.session_state.get("answer_prompt", ""))
-st.sidebar.subheader("Examples")
-st.sidebar.write(st.session_state.get("examples", ""))
 st.sidebar.subheader("Summary")
 st.sidebar.write(st.session_state.get("summary", ""))
+st.sidebar.subheader("Examples")
+st.sidebar.write(st.session_state.get("examples", ""))
+
 #button to reset session_state
 if st.sidebar.button("Reset Session State"):
     st.session_state = {}

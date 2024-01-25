@@ -122,9 +122,6 @@ def colify(messages, suggestion):
     prompt = prompt.format(summary=suggestion)
     prompt = {'role': 'system', 'content': prompt}
     messages = [prompt, *messages]
-    print('##')
-    [print(message) for message in messages]
-    print('##')
     response = generate_streaming_response(messages, "gpt-4-1106-preview", max_tokens=200)
     for chunk in response:
         yield chunk 
@@ -180,7 +177,7 @@ def generate_cole_response(messages, dbs, session_state, max_tokens = 200):
     llm_messages = [custom_prompt, *messages]
 
     #generate summary
-    summary = generate_response(llm_messages, "gpt-3.5-turbo", max_tokens=600)
+    summary = generate_response(llm_messages, "gpt-3.5-turbo-16k", max_tokens=600)
     print('got outbound message')
     session_state["summary"] = summary
 
