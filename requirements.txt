@@ -6,3 +6,5 @@ langchain_community
 langchain
 unstructured
 langchain_experimental
+fastapi
+uvicorn

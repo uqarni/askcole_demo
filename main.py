@@ -1,71 +1,38 @@
-from aifuncs import initialize_all_vdbs, generate_cole_response
+from vdb import initialize_all_vdbs, find_examples
+from fastapi import FastAPI, HTTPException
+from typing import Optional
 
-##### EXAMPLE #####
-#initialize all vector databases
-call_intro = initialize_vdb('call_intro')
-goal_first_or_problem_first = initialize_vdb('goal_first_or_problem_first')
-objection_handling = initialize_vdb('objection_handling')
-pitch = initialize_vdb('pitch')
-skilled_questions = initialize_vdb('skilled_questions')
-unknown_or_NA = None #initialize_vdb('unknown_or_NA')
+#initialize dbs
+dbs = initialize_all_vdbs()
 
-dbs = {
-    "call_intro": call_intro,
-    "goal_first_or_problem_first": goal_first_or_problem_first,
-    "objection_handling": objection_handling,
-    "pitch": pitch,
-    "skilled_questions": skilled_questions,
-    "unknown_or_NA": unknown_or_NA
-}
+app = FastAPI()
 
-file_path = 'prompts/answer_prompt.txt'
-with open(file_path, 'r') as file:
-    prompt = file.read()
+#find examples
+def find_examples(db, query, k=5):
+    docs = db.similarity_search(query, k=k)
 
-outbound = "Hi there, I'm Cole. CEO of Closers.io. I'm here to help you with your sales calls. What's your question?"
-inbound = ""
-messages = []
+    examples = ""
+    i = 1
+    for doc in docs:
+       examples += f'\n\nEXAMPLE {i}:\n' + doc.page_content
+       i+=1
+    return examples
 
-while inbound != "Exit":
-    print("###################################################")
-    inbound = input("Cole: " 
-                    + outbound 
-                    + "\n###################################################"
-                    +'\nYou: ')
-    
-    if inbound == "Exit":
-        break
-    
-    #append user input to messages
-    messages.append({"role": "user", "content": inbound})
 
-    #classify inquiry
-    topic = which_rag(messages, "gpt-3.5-turbo")
+# Replace 'YourDatabaseType' with the actual type of your db object
+@app.get("/find-examples/")
+async def find_examples_endpoint(db, query: str, k: Optional[int] = 5):
+    try:
+        db = dbs.get('db', None)
+        if db:
+            examples = find_examples(db, query, k)
+            return {"examples": examples}
+        return {"examples": ""}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    #get appropriate vector database
-    if topic != 'unknown_or_NA':
-        db = dbs[topic]
-
-        #do similarity search and get examples
-        examples = find_examples(db, inbound)
-
-        #format custom system prompt
-        prompt = prompt + examples
-
-    custom_prompt = {"role": "system", "content": prompt}
-
-    #format messages for response generation
-    llm_messages = [custom_prompt, *messages]
-
-    #generate response
-    outbound = generate_response(llm_messages, "gpt-4-1106-preview")
-
-    #colify
-    outbound = colify(messages, outbound)
-
-    if outbound:
-        messages.append({"role": "assistant", "content": outbound})
-
-    else:
-        print("Sorry man, I'm late to a meeting. Just hit me up on Telegram!")
-        break
+        
+#using uvicorn to run the app:
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
