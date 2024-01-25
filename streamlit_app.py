@@ -3,7 +3,8 @@ from openai import OpenAI
 import streamlit as st
 import os
 
-dbs = initialize_all_vdbs()
+if st.session_state.get("dbs") is None:
+    st.session_state["dbs"] = initialize_all_vdbs()
 
 st.title("AskCole")
 
@@ -25,8 +26,24 @@ if prompt := st.chat_input("What is up?"):
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
         full_response = ""
-        for response in generate_cole_response(st.session_state.messages, dbs):
+        dbs = st.session_state.dbs
+        for response in generate_cole_response(st.session_state.messages, dbs, st.session_state):
             full_response += (response or "")
             message_placeholder.markdown(full_response + "▌")
         message_placeholder.markdown(full_response)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
+
+
+st.sidebar.title("Response Variables")
+#show the session_state variables: topic, answer_prompt, examples, original_outgoig, colified_outgoing with a title above each one
+st.sidebar.subheader("Topic")
+st.sidebar.write(st.session_state.get("topic", ""))
+# st.sidebar.write("Answer Prompt")
+# st.sidebar.write(st.session_state.get("answer_prompt", ""))
+st.sidebar.subheader("Examples")
+st.sidebar.write(st.session_state.get("examples", ""))
+st.sidebar.subheader("Summary")
+st.sidebar.write(st.session_state.get("summary", ""))
+#button to reset session_state
+if st.sidebar.button("Reset Session State"):
+    st.session_state = {}

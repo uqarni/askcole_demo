@@ -119,13 +119,15 @@ def colify(messages, suggestion):
     with open('prompts/cole_prompt.txt', 'r') as file:
         prompt = file.read()
     
-    
-    prompt = {'role': 'system', 'content': prompt.format(suggestion=suggestion)}
-    messages = [prompt, *messages[1:]]
-
+    prompt = prompt.format(summary=suggestion)
+    prompt = {'role': 'system', 'content': prompt}
+    messages = [prompt, *messages]
+    print('##')
+    [print(message) for message in messages]
+    print('##')
     response = generate_streaming_response(messages, "gpt-4-1106-preview", max_tokens=200)
     for chunk in response:
-        yield chunk
+        yield chunk 
 
 
 def initialize_all_vdbs():
@@ -147,47 +149,55 @@ def initialize_all_vdbs():
 
     return dbs
 
-def generate_cole_response(messages, dbs, max_tokens = 200):
+def generate_cole_response(messages, dbs, session_state, max_tokens = 200):
     '''messages are always promptless'''
 
     #classify inquiry
     topic = which_rag(messages, 'gpt-3.5-turbo')
     print('topic: ', topic)
+    session_state["topic"] = topic
 
     #pull prompt
     with open('prompts/answer_prompt.txt', 'r') as file:
         answer_prompt = file.read()
+        session_state["answer_prompt"] = answer_prompt
 
     #get appropriate examples from vector database
-    if topic != 'unknown_or_NA':
+    if topic != 'unknown_or_NA' and topic != 'skilled_questions':
         db = dbs[topic]
 
         #do similarity search and get examples
         examples = find_examples(db, messages[-1]['content'])
+        session_state["examples"] = examples
 
         #format custom system prompt
         answer_prompt = answer_prompt + examples
-        print('got answer prmpt')
+        answer_prompt = answer_prompt.format(incoming = messages[-1]['content'])
 
     custom_prompt = {"role": "system", "content": answer_prompt}
 
     #format messages for response generation
     llm_messages = [custom_prompt, *messages]
 
-    #generate response
-    outbound = generate_response(llm_messages, "gpt-4-1106-preview", max_tokens=max_tokens)
+    #generate summary
+    summary = generate_response(llm_messages, "gpt-3.5-turbo", max_tokens=600)
     print('got outbound message')
+    session_state["summary"] = summary
 
-    #colify
-    outbound = colify(messages, outbound)
+    #Cole-ify
+    outbound = colify(messages, summary)
     print('streaming colified response')
+
     for chunk in outbound:
         if chunk != None:
             yield chunk
 
 messages = [
-    #{'role': 'system', 'content': 'You are a salesperson talking to a customer. You are trying to figure out what to say next.'},
+    {'role': 'system', 'content': 'You are a salesperson talking to a customer. You are trying to figure out what to say next.'},
     {'role': 'user', 'content': 'How can I intro my calls better?'}
 ]
 
 
+# test = generate_streaming_response(messages, "gpt-3.5-turbo", max_tokens=200)
+# for chunk in test:
+#     print(chunk)
