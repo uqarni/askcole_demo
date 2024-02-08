@@ -1,12 +1,4 @@
-langchain_openai
-tiktoken
-faiss-cpu
 openai
-langchain_community
-langchain
-unstructured
-langchain_experimental
-fastapi
-uvicorn
 icecream
 supabase
+streamlit

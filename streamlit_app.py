@@ -30,3 +30,10 @@ if prompt := st.chat_input("How can I help?"):
         stream = full_response(messages)
         response = st.write_stream(stream)
     st.session_state.messages.append({"role": "assistant", "content": response})
+
+if st.sidebar.button("Start/Restart"):
+    #clear the entire session state
+    st.session_state.clear()
+    #rerun
+    st.rerun()
+

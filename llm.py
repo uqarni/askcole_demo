@@ -123,7 +123,7 @@ def full_response(messages):
     summarizer_prompt = summarizer_prompt.format(query = query, retrieved_chunks = retrieved_chunks)
     summarizer_prompt = {'role': 'system', 'content': summarizer_prompt}
 
-    summary = generate_response([summarizer_prompt, *messages], 'gpt-4-1106-preview', 500)
+    summary = generate_response([summarizer_prompt, *messages], 'gpt-3.5-turbo-16k', 500)
     #remember we might have to reload this or something
     ic(summary)
 
