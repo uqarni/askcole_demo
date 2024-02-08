@@ -23,6 +23,10 @@ if prompt := st.chat_input("How can I help?"):
 
     # Display assistant response in chat message container
     with st.chat_message("assistant"):
-        stream = full_response(st.session_state.messages)
+        messages=[
+                {"role": m["role"], "content": m["content"]}
+                for m in st.session_state.messages
+            ]
+        stream = full_response(messages)
         response = st.write_stream(stream)
     st.session_state.messages.append({"role": "assistant", "content": response})
