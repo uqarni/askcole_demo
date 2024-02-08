@@ -25,7 +25,7 @@ def generate_streaming_response(messages, model, max_tokens = 200):
     try:
         response = openai.chat.completions.create(model=model, messages=messages, max_tokens=max_tokens, temperature=0, stream=True)
         for chunk in response:
-            yield chunk.choices[0].delta.content
+            yield chunk
     except Exception as e:
         #always log exceptions
         logging.exception(f"Exception occurred: {e}")
@@ -135,7 +135,8 @@ def full_response(messages):
     cole_response = generate_streaming_response([cole_prompt, *messages], 'gpt-4-1106-preview', 250)
 
     for chunk in cole_response:
-        yield chunk
+        if chunk is not None:
+            yield chunk
 
 test = [{"role": "user", "content": "how do I handle financial objections"}]
 
