@@ -2,6 +2,7 @@ from openai import OpenAI
 import logging
 import json
 from icecream import ic
+import streamlit as st
 
 #########LANGCHAIN EXAMPLES PULLER #########
 from db import SupabaseClient
@@ -117,6 +118,9 @@ def full_response(messages):
         retrieved_chunks += f'Chunk {i}:\n' + chunk['content'] + "\n\n"
 
     ic(retrieved_chunks)
+    #save in session state
+    st.session_state.chunks = retrieved_chunks
+
     #summarize
     #summarizer_prompt = sb.get_system_prompt('prompt', 'summarizer')
     summarizer_prompt = "Your job is to summarize the following chunks of information that was retrieved from out database. It probably has to do with objection handling on a sales call as a sales person. The user asked {query}. The following chunks were retrieved: {retrieved_chunks}. Just respond only with a summary, nothing else."
@@ -126,6 +130,7 @@ def full_response(messages):
     summary = generate_response([summarizer_prompt, *messages], 'gpt-3.5-turbo-16k', 500)
     #remember we might have to reload this or something
     ic(summary)
+    st.session_state.summary = summary
 
     #generate cole response
     cole_prompt = sb.get_system_prompt('prompt', 'askcole_objections')
