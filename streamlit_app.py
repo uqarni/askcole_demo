@@ -1,55 +1,28 @@
-from aifuncs import initialize_all_vdbs, generate_cole_response
-from openai import OpenAI
 import streamlit as st
-import os
+from openai import OpenAI
+from llm import full_response
 
+st.title("AskCole: Objection Handling")
 
+# Initialize chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-st.title("AskCole")
+# Display chat messages from history on app rerun
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-if st.session_state.get("dbs") is None:
-    if st.button("Initialize Vector Databases (takes a minute)"):
-        st.session_state["dbs"] = initialize_all_vdbs()
-        st.rerun()
+# Accept user input
+if prompt := st.chat_input("How can I help?"):
+    # Add user message to chat history
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    # Display user message in chat message container
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-else:
-    if "openai_model" not in st.session_state:
-        st.session_state["openai_model"] = "gpt-3.5-turbo"
-
-    if "messages" not in st.session_state:
-        st.session_state["messages"] = []
-
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-
-    if prompt := st.chat_input("What is up?"):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-
-        with st.chat_message("assistant"):
-            message_placeholder = st.empty()
-            full_response = ""
-            dbs = st.session_state.dbs
-            for response in generate_cole_response(st.session_state.messages, dbs, st.session_state):
-                full_response += (response or "")
-                message_placeholder.markdown(full_response + "▌")
-            message_placeholder.markdown(full_response)
-        st.session_state.messages.append({"role": "assistant", "content": full_response})
-
-
-st.sidebar.title("Response Variables")
-#show the session_state variables: topic, answer_prompt, examples, original_outgoig, colified_outgoing with a title above each one
-st.sidebar.subheader("Topic")
-st.sidebar.write(st.session_state.get("topic", ""))
-# st.sidebar.write("Answer Prompt")
-# st.sidebar.write(st.session_state.get("answer_prompt", ""))
-st.sidebar.subheader("Summary")
-st.sidebar.write(st.session_state.get("summary", ""))
-st.sidebar.subheader("Examples")
-st.sidebar.write(st.session_state.get("examples", ""))
-
-#button to reset session_state
-if st.sidebar.button("Reset Session State"):
-    st.session_state = {}
+    # Display assistant response in chat message container
+    with st.chat_message("assistant"):
+        stream = full_response(st.session_state.messages)
+        response = st.write_stream(stream)
+    st.session_state.messages.append({"role": "assistant", "content": response})
