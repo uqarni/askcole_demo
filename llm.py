@@ -125,7 +125,7 @@ def full_response(messages):
 
     #summarize
     summarizer_prompt = sb.get_system_prompt('prompt', 'summarizer')
-    summarizer_prompt = summarizer_prompt.format(query = formatted_messages, retrieved_chunks = retrieved_chunks)
+    summarizer_prompt = summarizer_prompt.format(formatted_messages = formatted_messages, retrieved_chunks = retrieved_chunks)
     summarizer_prompt = {'role': 'system', 'content': summarizer_prompt}
 
     summary = generate_response([summarizer_prompt, *messages], 'gpt-3.5-turbo-16k', 500)
