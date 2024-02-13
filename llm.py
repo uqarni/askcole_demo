@@ -101,13 +101,15 @@ def full_response(messages):
     # messages = ss.messages
 
     #pull last message
-    query = messages[-1]['content']
-    
+    formatted_messages = ""
+    for message in messages:
+        formatted_messages += f"{message['role']}: {message['content']}\n\n"
+
     #classify
     #TODO 
 
     #vectorize
-    v_query = embed_query(query)
+    v_query = embed_query(formatted_messages)
 
     #perform similarity search 
     k_similar = sb.match_documents_knn(v_query, 4)
@@ -123,8 +125,8 @@ def full_response(messages):
 
     #summarize
     #summarizer_prompt = sb.get_system_prompt('prompt', 'summarizer')
-    summarizer_prompt = "Your job is to summarize the following chunks of information that was retrieved from out database. It probably has to do with objection handling on a sales call as a sales person. The user asked {query}. The following chunks were retrieved: {retrieved_chunks}. Just respond only with a summary, nothing else."
-    summarizer_prompt = summarizer_prompt.format(query = query, retrieved_chunks = retrieved_chunks)
+    summarizer_prompt = "You work for Closers.IO, a company that sells a training course on how to be a sales agent. Your job is to summarize the following chunks of information that was retrieved from our database. It has to do with objection handling on a sales call as a sales person. The following chunks were retrieved: {retrieved_chunks}. Just respond only with a summary, nothing else. Stick to exactly the best practices and information in the chunks, don't make anything up."
+    summarizer_prompt = summarizer_prompt.format(query = formatted_messages, retrieved_chunks = retrieved_chunks)
     summarizer_prompt = {'role': 'system', 'content': summarizer_prompt}
 
     summary = generate_response([summarizer_prompt, *messages], 'gpt-3.5-turbo-16k', 500)
@@ -137,7 +139,7 @@ def full_response(messages):
     cole_prompt = cole_prompt.format(summary = summary)
     cole_prompt = {'role': 'system', 'content': cole_prompt}
 
-    cole_response = generate_streaming_response([cole_prompt, *messages], 'gpt-4-1106-preview', 250)
+    cole_response = generate_streaming_response([cole_prompt, *messages], 'gpt-4-1106-preview', 350)
 
     for chunk in cole_response:
         if chunk is not None:
