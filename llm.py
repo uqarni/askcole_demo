@@ -124,8 +124,7 @@ def full_response(messages):
     st.session_state.chunks = retrieved_chunks
 
     #summarize
-    #summarizer_prompt = sb.get_system_prompt('prompt', 'summarizer')
-    summarizer_prompt = "You work for Closers.IO, a company that sells a training course on how to be a sales agent. Your job is to summarize the following chunks of information that was retrieved from our database. It has to do with objection handling on a sales call as a sales person. The following chunks were retrieved: {retrieved_chunks}. Just respond only with a summary, nothing else. Stick to exactly the best practices and information in the chunks, don't make anything up."
+    summarizer_prompt = sb.get_system_prompt('prompt', 'summarizer')
     summarizer_prompt = summarizer_prompt.format(query = formatted_messages, retrieved_chunks = retrieved_chunks)
     summarizer_prompt = {'role': 'system', 'content': summarizer_prompt}
 
