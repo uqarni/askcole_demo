@@ -125,7 +125,7 @@ def full_response(messages):
     v_query = embed_query(formatted_messages)
 
     #perform similarity search 
-    k_similar = sb.match_documents_knn(v_query, 4)
+    k_similar = sb.match_documents_knn(v_query, 6)
     k_similar = k_similar.data
 
     retrieved_chunks = ""
