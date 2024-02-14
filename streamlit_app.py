@@ -3,6 +3,7 @@ from openai import OpenAI
 from llm import full_response
 
 st.title("AskCole: Objection Handling")
+st.markdown("No Summarizer")
 
 # Initialize chat history
 if "messages" not in st.session_state:
