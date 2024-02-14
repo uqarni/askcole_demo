@@ -3,11 +3,24 @@ import logging
 import json
 from icecream import ic
 import streamlit as st
+from dotenv import load_dotenv
+import os
 
-#########LANGCHAIN EXAMPLES PULLER #########
-from db import SupabaseClient
+load_dotenv()
 
-sb = SupabaseClient()
+
+
+#########INITIALIZE DBs #########
+from db import SupabaseClient, askcole_objections, askcole_summarizer
+
+gp_sb_key = os.getenv("GP_SB_KEY")
+gp_sb_url = os.getenv("GP_SB_URL")
+
+ak_sb_key = os.getenv("AK_SB_KEY")
+ak_sb_url = os.getenv("AK_SB_URL")
+
+sb = SupabaseClient(ak_sb_url, ak_sb_key)
+
 
 #########OPENAI API#########
 openai = OpenAI(max_retries = 10)
@@ -124,7 +137,7 @@ def full_response(messages):
     st.session_state.chunks = retrieved_chunks
 
     #summarize
-    summarizer_prompt = sb.get_system_prompt('prompt', 'summarizer')
+    summarizer_prompt = askcole_summarizer
     summarizer_prompt = summarizer_prompt.format(formatted_messages = formatted_messages, retrieved_chunks = retrieved_chunks)
     summarizer_prompt = {'role': 'system', 'content': summarizer_prompt}
 
@@ -134,7 +147,7 @@ def full_response(messages):
     st.session_state.summary = summary
 
     #generate cole response
-    cole_prompt = sb.get_system_prompt('prompt', 'askcole_objections')
+    cole_prompt = askcole_objections
     cole_prompt = cole_prompt.format(summary = summary)
     cole_prompt = {'role': 'system', 'content': cole_prompt}
 
@@ -149,3 +162,4 @@ test = [{"role": "user", "content": "how do I handle financial objections"}]
 # result = full_response(test)
 # for i in result:
 #     print(i)
+

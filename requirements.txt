@@ -2,3 +2,4 @@ openai
 icecream
 supabase
 streamlit
+python-dotenv
