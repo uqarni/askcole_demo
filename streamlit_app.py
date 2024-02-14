@@ -40,14 +40,8 @@ if st.sidebar.button("Start/Restart"):
     #rerun
     st.rerun()
 
-if not st.session_state.get('summary'):
-    st.session_state.summary = ""
 if not st.session_state.get('chunks'):
     st.session_state.chunks = ""
-
-
-
-st.sidebar.text_area("Summary", value = st.session_state.summary)
 
 
 st.sidebar.text_area("Chunks", value = st.session_state.chunks)
