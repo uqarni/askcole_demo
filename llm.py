@@ -137,18 +137,19 @@ def full_response(messages):
     st.session_state.chunks = retrieved_chunks
 
     #summarize
-    summarizer_prompt = askcole_summarizer
-    summarizer_prompt = summarizer_prompt.format(formatted_messages = formatted_messages, retrieved_chunks = retrieved_chunks)
-    summarizer_prompt = {'role': 'system', 'content': summarizer_prompt}
+    # summarizer_prompt = askcole_summarizer
+    # summarizer_prompt = summarizer_prompt.format(formatted_messages = formatted_messages, retrieved_chunks = retrieved_chunks)
+    # summarizer_prompt = {'role': 'system', 'content': summarizer_prompt}
 
-    summary = generate_response([summarizer_prompt, *messages], 'gpt-3.5-turbo-16k', 500)
+    # summary = generate_response([summarizer_prompt, *messages], 'gpt-3.5-turbo-16k', 500)
+    summary = 'none'
     #remember we might have to reload this or something
     ic(summary)
     st.session_state.summary = summary
 
     #generate cole response
     cole_prompt = askcole_objections
-    cole_prompt = cole_prompt.format(summary = summary)
+    cole_prompt = cole_prompt.format(summary = retrieved_chunks)
     cole_prompt = {'role': 'system', 'content': cole_prompt}
 
     cole_response = generate_streaming_response([cole_prompt, *messages], 'gpt-4-1106-preview', 350)
