@@ -136,8 +136,8 @@ def full_response(messages):
         summarizer_response = generate_response(askcole_summarizer_prompt, 'gpt-4-turbo-preview', 500)
         ic(summarizer_response)
         messages = [messages[0], {'role': 'user', 'content': '[Original Conversation was long and ommitted. Summary:\n' + summarizer_response}, messages[-1]]
-        st.session_state.messages = messages
-        
+        st.session_state.llm_messages = messages
+
     st.session_state.previous_category = category
 
     #perform similarity search 
