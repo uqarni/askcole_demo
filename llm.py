@@ -11,7 +11,7 @@ load_dotenv()
 
 
 #########INITIALIZE DBs #########
-from db import SupabaseClient, askcole_objections, askcole_summarizer
+from db import SupabaseClient, askcole_classifier, askcole_responder
 
 gp_sb_key = os.getenv("GP_SB_KEY")
 gp_sb_url = os.getenv("GP_SB_URL")
@@ -71,8 +71,8 @@ tools=[
                     "topic":
                     {
                         "type": "string",
-                        "enum": ["call_intro", "goal_first_or_problem_first", "objection_handling", "pitch", "skilled_questions", "unknown_or_NA"],
-                        "description": "Select call_intro if it is about call introductions, goal_first_or_problem_first if about whether to talk about the goal first or the problem first, objection_handling if about how to handle objections, pitch if about how to pitch, skilled_questions if about specific questions, unknown_or_NA if none of the others.",
+                        "enum": ["call_intro", "discovery", "transition", "pitching", "closing", "objection_handling"],
+                        "description": "Select the category of knowledge base documentation the bot should reference to find the answer.",
                     },
                 },
                 "required": ["topic"]
@@ -83,9 +83,9 @@ tools=[
 ]
 
 #messages has a system prompt as the first message
-def which_rag(messages, model, tools = tools):
+def which_rag(prompt, messages, model, tools = tools):
     
-    system_prompt = {'role': 'system', 'content': 'You are a salesperson talking to a customer. You are trying to figure out what to say next.'}
+    system_prompt = {'role': 'system', 'content': prompt}
     messages = [system_prompt, *messages]
     try:
         response = openai.chat.completions.create(
@@ -105,27 +105,25 @@ def which_rag(messages, model, tools = tools):
     return False
 
 messages = [
-    {'role': 'system', 'content': 'You are a salesperson talking to a customer. You are trying to figure out what to say next.'},
     {'role': 'user', 'content': 'How can I intro my calls better?'}
 ]
 
 def full_response(messages):
-    #get messages
-    # messages = ss.messages
-
-    #pull last message
     formatted_messages = ""
     for message in messages:
         formatted_messages += f"{message['role']}: {message['content']}\n\n"
 
     #classify
-    #TODO 
+    classifier_prompt = askcole_classifier
+    category = which_rag(classifier_prompt, messages, 'gpt-3.5-turbo')
+    ic(category)
+    #st.session_state.category = category
 
     #vectorize
     v_query = embed_query(formatted_messages)
 
     #perform similarity search 
-    k_similar = sb.match_documents_knn(v_query, 6)
+    k_similar = sb.match_documents_knn_with_label(category, v_query, 6)
     k_similar = k_similar.data
 
     retrieved_chunks = ""
@@ -134,33 +132,15 @@ def full_response(messages):
 
     ic(retrieved_chunks)
     #save in session state
-    st.session_state.chunks = retrieved_chunks
-
-    #summarize
-    # summarizer_prompt = askcole_summarizer
-    # summarizer_prompt = summarizer_prompt.format(formatted_messages = formatted_messages, retrieved_chunks = retrieved_chunks)
-    # summarizer_prompt = {'role': 'system', 'content': summarizer_prompt}
-
-    # summary = generate_response([summarizer_prompt, *messages], 'gpt-3.5-turbo-16k', 500)
-    summary = 'none'
-    #remember we might have to reload this or something
-    ic(summary)
-    st.session_state.summary = summary
+    #st.session_state.chunks = retrieved_chunks
 
     #generate cole response
-    cole_prompt = askcole_objections
-    cole_prompt = cole_prompt.format(summary = retrieved_chunks)
+    cole_prompt = askcole_responder
+    cole_prompt = cole_prompt.format(RAG_results = retrieved_chunks, classifier_variable = "Use the snippets below to answer")
     cole_prompt = {'role': 'system', 'content': cole_prompt}
 
-    cole_response = generate_streaming_response([cole_prompt, *messages], 'gpt-4-1106-preview', 350)
+    cole_response = generate_streaming_response([cole_prompt, *messages], 'gpt-4-turbo-preview', 350)
 
     for chunk in cole_response:
         if chunk is not None:
-            yield chunk
-
-test = [{"role": "user", "content": "how do I handle financial objections"}]
-
-# result = full_response(test)
-# for i in result:
-#     print(i)
-
+            yield chunk.choices[0].delta.content

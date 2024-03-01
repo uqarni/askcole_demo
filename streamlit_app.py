@@ -40,9 +40,13 @@ if st.sidebar.button("Start/Restart"):
     st.session_state['started'] = True
     #rerun
     st.rerun()
+    
+if not st.session_state.get('category'):
+    st.session_state.category = ""
+
+st.sidebar.text_area("Category", value = st.session_state.category)
 
 if not st.session_state.get('chunks'):
     st.session_state.chunks = ""
-
 
 st.sidebar.text_area("Chunks", value = st.session_state.chunks)

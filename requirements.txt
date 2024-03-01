@@ -3,3 +3,9 @@ icecream
 supabase
 streamlit
 python-dotenv
+langchain
+langchain_experimental
+langchain_openai
+unstructured
+tiktoken
+simsimd

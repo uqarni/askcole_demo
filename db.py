@@ -37,11 +37,12 @@ class SupabaseClient:
         except Exception as e:
             logging.exception("Exception occurred")
 
-    def match_documents_knn(self, query_embedding, match_count):
-        # Call the updated SQL function 'match_documents_knn'
-        request = self.db.rpc('match_vdb_knn', {
+    def match_documents_knn_with_label(self, label, query_embedding, match_count):
+        # Call the updated SQL function 'match_documents_knn_with_label'
+        request = self.db.rpc('match_vdb_knn_with_label', {
             'query_embedding': query_embedding,
-            'match_count': match_count
+            'match_count': match_count,
+            'label': label
         })
         # Execute the request and get the result
         result = request.execute()
@@ -80,22 +81,20 @@ class G2SupabaseClient:
         except Exception as e:
             logging.exception("Exception occurred")
 
-    def match_documents_knn(self, query_embedding, match_count):
+    def match_documents_knn_with_label(self, label, query_embedding, match_count):
         # Call the updated SQL function 'match_documents_knn'
-        request = self.db.rpc('match_vdb_knn', {
+        request = self.db.rpc('match_vdb_knn_with_label', {
             'query_embedding': query_embedding,
-            'match_count': match_count
+            'match_count': match_count,
+            'label': label
         })
         # Execute the request and get the result
         result = request.execute()
         return result
 
 test = G2SupabaseClient()
-askcole_objections = test.get_system_prompt("bots_dev", "askcole_objections")
-askcole_summarizer = test.get_system_prompt("bots_dev", "askcole_summarizer")
-
-ic(len(askcole_objections))
-ic(len(askcole_summarizer))
+askcole_classifier = test.get_system_prompt("bots_dev", "askcole_classifier")
+askcole_responder = test.get_system_prompt("bots_dev", "askcole_responder")
 # #array of 1536 0.5's
 # x = [0.5]*1536
 # test = sb.match_documents_knn(x, 5)
