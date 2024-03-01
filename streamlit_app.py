@@ -44,6 +44,9 @@ if st.sidebar.button("Start/Restart"):
 if not st.session_state.get('category'):
     st.session_state.category = ""
 
+if not st.session_state.get("previous_category"):
+    st.session_state.previous_category = ""
+
 st.sidebar.text_area("Category", value = st.session_state.category)
 
 if not st.session_state.get('chunks'):

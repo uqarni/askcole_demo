@@ -95,6 +95,11 @@ class G2SupabaseClient:
 test = G2SupabaseClient()
 askcole_classifier = test.get_system_prompt("bots_dev", "askcole_classifier")
 askcole_responder = test.get_system_prompt("bots_dev", "askcole_responder")
+
+def get_summarizer():
+    askcole_summarizer = test.get_system_prompt("bots_dev", "askcole_summarizer")
+    return askcole_summarizer
+
 # #array of 1536 0.5's
 # x = [0.5]*1536
 # test = sb.match_documents_knn(x, 5)

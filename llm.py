@@ -11,7 +11,7 @@ load_dotenv()
 
 
 #########INITIALIZE DBs #########
-from db import SupabaseClient, askcole_classifier, askcole_responder
+from db import SupabaseClient, askcole_classifier, askcole_responder, get_summarizer
 
 gp_sb_key = os.getenv("GP_SB_KEY")
 gp_sb_url = os.getenv("GP_SB_URL")
@@ -111,17 +111,34 @@ messages = [
 def full_response(messages):
     formatted_messages = ""
     for message in messages:
-        formatted_messages += f"{message['role']}: {message['content']}\n\n"
+        formatted_message = f"{message['role']}: {message['content']}\n\n"
+        formatted_messages += formatted_message
 
     #classify
     classifier_prompt = askcole_classifier
     category = which_rag(classifier_prompt, messages, 'gpt-3.5-turbo')
     ic(category)
     custom_phrase = custom_phrases[category]
+
+    #update 
     st.session_state.category = category
 
     #vectorize
-    v_query = embed_query(formatted_messages)
+    if st.session_state.previous_category == category or st.session_state.previous_category == "":
+        v_query = embed_query(formatted_messages)
+    else:
+        v_query = embed_query(formatted_message)
+        st.session_state.previous_category = category
+        #now we need to summarize and replace the messages in the middle with the summary
+        askcole_summarizer_prompt = get_summarizer()
+        askcole_summarizer_prompt = askcole_summarizer_prompt.format(conversation = [f"Lead: {message['content']}\n\n" if message['role'].lower() == 'user' else f"Cole: {message['content']}\n\n" for message in messages[1:-1]])
+        askcole_summarizer_prompt = [{'role': 'system', 'content': askcole_summarizer_prompt}]
+        summarizer_response = generate_response(askcole_summarizer_prompt, 'gpt-4-turbo-preview', 500)
+        ic(summarizer_response)
+        messages = [messages[0], {'role': 'user', 'content': '[Original Conversation was long and ommitted. Summary:\n' + summarizer_response}, messages[-1]]
+        st.session_state.messages = messages
+        
+    st.session_state.previous_category = category
 
     #perform similarity search 
     k_similar = sb.match_documents_knn_with_label(category, v_query, 6)
