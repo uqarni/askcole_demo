@@ -7,7 +7,7 @@ from langchain_community.vectorstores.pgvector import PGVector
 from langchain_openai import OpenAIEmbeddings
 from icecream import ic
 
-loader = DirectoryLoader('docs/discovery')
+loader = DirectoryLoader('docs/closing')
 documents = loader.load()
 text_splitter = SemanticChunker(OpenAIEmbeddings())
 docs = text_splitter.split_documents(documents)
@@ -54,7 +54,7 @@ for doc in docs:
         try:
             to_add_to_labels_table = {
                 'vdb_id': embedding_id,
-                'label': 'discovery'
+                'label': 'closing'
             }
             test = sb.insert('label', to_add_to_labels_table)
         except:
