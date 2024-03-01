@@ -3,7 +3,7 @@ from openai import OpenAI
 from llm import full_response
 
 st.title("AskCole v4")
-st.markdown("This is AskCole. You can ask questions about how to (1) start a sales call, (2) transitioning to pitching, (3) pitching, (4) closing, and (5) handling objections.")
+st.markdown("This is AskCole. You can ask questions about how to (1) start a sales call, (2)  discovery, (3) pitching, (4) transitioning, (5) closing, and (6) handling objections.")
 
 # Initialize chat history
 if "messages" not in st.session_state:
