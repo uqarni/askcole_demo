@@ -58,3 +58,8 @@ if not st.session_state.get('chunks'):
     st.session_state.chunks = ""
 
 st.sidebar.text_area("Chunks", value = st.session_state.chunks)
+
+if not st.session_state.get('prompt'):
+    st.session_state.prompt = ""
+
+st.sidebar.text_area("Prompt", value = st.session_state.prompt)
