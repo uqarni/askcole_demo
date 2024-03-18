@@ -153,7 +153,7 @@ def full_response(messages):
         source = sb.table("vdb").select("*").eq("id", chunk_id).execute()
         source = source.data[0]['source']
         if classifier_URL == "":
-            classifier_URL = name_to_url[chunk['source']]
+            classifier_URL = name_to_url[source]
 
     #save in session state
     st.session_state.chunks = retrieved_chunks
