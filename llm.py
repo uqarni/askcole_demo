@@ -153,7 +153,7 @@ def full_response(messages):
 
     #generate cole response
     cole_prompt = askcole_responder
-    cole_prompt = cole_prompt.format(RAG_results = retrieved_chunks, classifier_variable = custom_phrase)
+    cole_prompt = cole_prompt.format(RAG_results = retrieved_chunks, classifier_variable = custom_phrase, classifier_URL = "placeholder; WIP")
     cole_prompt = {'role': 'system', 'content': cole_prompt}
 
     cole_response = generate_streaming_response([cole_prompt, *messages], 'gpt-4-turbo-preview', 350)
