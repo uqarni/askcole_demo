@@ -150,7 +150,7 @@ def full_response(messages):
         retrieved_chunks += f'Chunk {i}:\n' + chunk['content'] + "\n\n"
         chunk_id = chunk['id']
         #get the source column value of the chunk using the supabase api
-        source = sb.table("vdb").select("*").eq("id", chunk_id).execute()
+        source = sb.db.table("vdb").select("*").eq("id", chunk_id).execute()
         source = source.data[0]['source']
         if classifier_URL == "":
             classifier_URL = name_to_url[source]
