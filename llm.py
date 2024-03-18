@@ -164,7 +164,7 @@ def full_response(messages):
     cole_prompt = cole_prompt.format(RAG_results = retrieved_chunks, classifier_variable = custom_phrase, classifier_URL = classifier_URL)
     cole_prompt = {'role': 'system', 'content': cole_prompt}
 
-    cole_response = generate_streaming_response([cole_prompt, *messages], 'gpt-4-turbo-preview', 350)
+    cole_response = generate_streaming_response([cole_prompt, *messages], 'gpt-4-turbo-preview', 700)
 
     for chunk in cole_response:
         if chunk.choices[0].delta.content is not None:
