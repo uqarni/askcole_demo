@@ -150,13 +150,13 @@ def full_response(messages):
         retrieved_chunks += f'Chunk {i}:\n' + chunk['content'] + "\n\n"
         if classifier_URL == "":
             classifier_URL = name_to_url[chunk['source']]
-            
+
     #save in session state
     st.session_state.chunks = retrieved_chunks
 
     #generate cole response
     cole_prompt = askcole_responder
-    cole_prompt = cole_prompt.format(RAG_results = retrieved_chunks, classifier_variable = custom_phrase, classifier_URL = "placeholder; WIP")
+    cole_prompt = cole_prompt.format(RAG_results = retrieved_chunks, classifier_variable = custom_phrase, classifier_URL = classifier_URL)
     cole_prompt = {'role': 'system', 'content': cole_prompt}
 
     cole_response = generate_streaming_response([cole_prompt, *messages], 'gpt-4-turbo-preview', 350)
