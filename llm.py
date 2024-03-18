@@ -148,8 +148,9 @@ def full_response(messages):
     classifier_URL = ""
     for i, chunk in enumerate(k_similar):
         retrieved_chunks += f'Chunk {i}:\n' + chunk['content'] + "\n\n"
-        if classifier_URL == "":
-            classifier_URL = name_to_url[chunk['source']]
+        ic(chunk)
+        # if classifier_URL == "":
+        #     classifier_URL = name_to_url[chunk['source']]
 
     #save in session state
     st.session_state.chunks = retrieved_chunks
