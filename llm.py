@@ -5,7 +5,7 @@ from icecream import ic
 import streamlit as st
 from dotenv import load_dotenv
 import os
-from utils import custom_phrases
+from utils import custom_phrases, name_to_url
 load_dotenv()
 
 
@@ -145,9 +145,12 @@ def full_response(messages):
     k_similar = k_similar.data
 
     retrieved_chunks = ""
+    classifier_URL = ""
     for i, chunk in enumerate(k_similar):
         retrieved_chunks += f'Chunk {i}:\n' + chunk['content'] + "\n\n"
-
+        if classifier_URL == "":
+            classifier_URL = name_to_url[chunk['source']]
+            
     #save in session state
     st.session_state.chunks = retrieved_chunks
 

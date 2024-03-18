@@ -42,3 +42,20 @@ custom_phrases = {
     'closing': closing,
     'objection_handling': objection_handling
 }
+
+name_to_url = {
+    '7FSA Uncertainty Based Objections.txt': 'https://docs.google.com/document/d/1Ti9lqQ0wbXUeyNkcOyp9VrLMWyNpimj5CvzXUTax9KI/edit?usp=sharing',
+    'Reframing Structures & Patterns.txt': 'https://docs.google.com/document/d/1a2eorpBbtWu7puxyZfZ7CFGV8TvjlcjIWPZbiY5qd24/edit?usp=sharing',
+    'Commit.txt': 'https://drive.google.com/file/d/1ERYFPbwIplv4zyrgxVXH6WILUOKxl2Zi/view',
+    '4.1 Pitch Codex Intro.txt': 'https://docs.google.com/document/d/1ArphMQ51xLf-SXQIPvAQCu6ZzEIS3qfpSDuBdGsHDYU/edit?usp=sharing',
+    'Information Gathering Questions.txt': 'https://docs.google.com/document/d/1dB3d-mtzdzixN5mDG5H9msWDQOJ75T_s58SKWbKyk5U/edit#heading=h.50rifhw9p0bb',
+    '4.2 How To Pitch.txt': 'https://docs.google.com/document/d/1z_g1IR33fY1AGGeozfOgK_UWilLdLrCoIkordlms4Y0/edit',
+    '4.2 Pacing First Objection.txt': 'https://docs.google.com/document/d/10heWk59hFYlivBFH89Qgs5EPLAiQCVzK9pQooFFdOGU/edit',
+    '3.6 Call Syntax #2 - Goals First.txt': 'https://docs.google.com/document/d/1mRrf_d-ewFV13VF7ujuYpMk91IL16LNyDq25QcshQNI/edit?usp=sharing',
+    '3.3 Call Syntax #1_ Problem First v2.txt': 'https://docs.google.com/document/d/1JpNdX47L72CakDq2GGYA2Hv0D0jhI2vMdSXwZCV6rQM/edit?usp=sharing',
+    '4.3 - Financial Objections.txt': 'https://docs.google.com/document/d/1_1bE9f4XDDiGr829WvJywxslXDYnuJc7ctq3JW4rOzQ/edit?usp=sharing',
+    '3.10 Transition Phase Basic.txt': 'https://drive.google.com/file/d/1jLDRs2dpyWGH827NdKvs29RnVo-XL6L-/view',
+    '2.4 Pitch Creation Worksheet.txt': 'https://docs.google.com/document/d/1EnWyDdoMb6yHXGgKkYYwagc5f77UC2z_xKY7GjuTfig/edit',
+    '4.4 Support Objections.txt': 'https://docs.google.com/document/d/1kBNpSUxUsS2ryRne4Lbfp8bG-o6X2uwnkCQEOeGXEOE/edit?usp=sharing',
+    '3.4 Call Introduction.txt': 'https://docs.google.com/document/d/1K_mHEC1aiDGXjwcrOPz2z6dkWcwSYQfq8QIE-RxqrIQ/edit?usp=sharing'
+}
