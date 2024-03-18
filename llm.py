@@ -154,6 +154,7 @@ def full_response(messages):
         source = source.data[0]['source']
         if classifier_URL == "":
             classifier_URL = name_to_url[source]
+            ic(classifier_URL)
 
     #save in session state
     st.session_state.chunks = retrieved_chunks
